@@ -1,0 +1,141 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="d-flex align-items-center">
+      <mat-card-title>Taskboard</mat-card-title>
+      <div class="m-l-auto">
+        <button mat-flat-button (click)="openDialog('Add', {})" color="primary">
+          Create Task
+        </button>
+      </div>
+    </div>
+
+    <div class="row taskboard m-t-24" cdkDropListGroup>
+      <!-- todo -->
+      <div class="col-lg-3">
+        <div class="taskboard-wrapper">
+          <div class="taskboard-list todos">
+            <div class="taskboard-header bg-primary p-y-8 p-x-16 rounded text-white m-b-16">
+              <span>New Orders</span>
+            </div>
+            <div class="taskboard-cards" [cdkDropListData]="new" id="new" cdkDropList (cdkDropListDropped)="drop($event)" >
+              <div *ngIf="new.length === 0" class="taskboard-task placeholder" cdkDrag>
+                <span class="f-s-14 text-muted">Drop tasks here</span>
+              </div>
+              @for(task of new; track task.id) {
+              <div class="taskboard-task" cdkDrag>
+                <div class="f-s-16 m-b-4 f-w-600">{{ task.name }}</div>
+                <span class="task-decription f-s-14">{{
+                  task.description
+                  }}</span>
+                <div>
+                  <div class="d-flex justify-content-end">
+                    <button mat-icon-button (click)="deleteTask(task)" class="d-flex justify-content-center">
+                      <mat-icon class="d-flex justify-content-center"><i-tabler name="trash"
+                          class="icon-18 d-flex"></i-tabler></mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- in progress -->
+      <div class="col-lg-3">
+        <div class="taskboard-wrapper">
+          <div class="taskboard-list inprogress">
+            <div class="taskboard-header bg-warning p-y-8 p-x-16 rounded text-white m-b-16">
+              <span>Design</span>
+            </div>
+            <div class="taskboard-cards" [cdkDropListData]="design" id="design"  cdkDropList (cdkDropListDropped)="drop($event)" >
+              <div *ngIf="design.length === 0" class="taskboard-task placeholder" cdkDrag>
+                <span class="f-s-14 text-muted">Drop tasks here</span>
+              </div>
+              @for(task of design; track task.id) {
+              <div class="taskboard-task" cdkDrag>
+                <div class="f-s-16 m-b-4 f-w-600">{{ task.name }}</div>
+                <span class="task-decription f-s-14">{{
+                  task.description
+                  }}</span>
+                <div>
+                  <div class="d-flex justify-content-end">
+                    <button mat-icon-button (click)="deleteTask(task)" class="d-flex justify-content-center">
+                      <mat-icon class="d-flex justify-content-center"><i-tabler name="trash"
+                          class="icon-18 d-flex"></i-tabler></mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- on hold -->
+      <div class="col-lg-3">
+        <div class="taskboard-wrapper">
+          <div class="taskboard-list onhold">
+            <div class="taskboard-header bg-error p-y-8 p-x-16 rounded text-white m-b-16">
+              <span>In Prossess</span>
+            </div>
+            <div class="taskboard-cards" [cdkDropListData]="inprossess" id="in_prossess" cdkDropList (cdkDropListDropped)="drop($event)">
+
+              <div *ngIf="inprossess.length === 0" class="taskboard-task placeholder" cdkDrag>
+                <span class="f-s-14 text-muted">Drop tasks here</span>
+              </div>
+
+              @for(task of inprossess; track task.id) {
+              <div class="taskboard-task" cdkDrag>
+                <div class="f-s-16 m-b-4 f-w-600">{{ task.name }}</div>
+                <span class="task-decription f-s-14">{{
+                  task.description
+                  }}</span>
+                <div>
+                  <div class="d-flex justify-content-end">
+                    <button mat-icon-button (click)="deleteTask(task)" class="d-flex justify-content-center">
+                      <mat-icon class="d-flex justify-content-center"><i-tabler name="trash"
+                          class="icon-18 d-flex"></i-tabler></mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- completed -->
+      <div class="col-lg-3">
+        <div class="taskboard-wrapper">
+          <div class="taskboard-list completed">
+            <div class="taskboard-header bg-success p-y-8 p-x-16 rounded text-white m-b-16">
+              <span>Finished</span>
+            </div>
+            <div class="taskboard-cards" [cdkDropListData]="completed" id="finished" cdkDropList (cdkDropListDropped)="drop($event)">
+              <div *ngIf="completed.length === 0" class="taskboard-task placeholder" cdkDrag>
+                <span class="f-s-14 text-muted">Drop tasks here</span>
+              </div>
+              @for(task of completed; track task.name) {
+              <div class="taskboard-task" cdkDrag>
+                <div class="f-s-16 m-b-4 f-w-600">{{ task.name }}</div>
+                <span class="task-decription f-s-14">{{
+                  task.description
+                  }}</span>
+                <div>
+                  <div class="d-flex justify-content-end">
+                    <button mat-icon-button (click)="deleteTask(task)" class="d-flex justify-content-center">
+                      <mat-icon class="d-flex justify-content-center"><i-tabler name="trash"
+                          class="icon-18 d-flex"></i-tabler></mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,105 @@
+<h2 mat-dialog-title class="m-b-24">Add New Contact</h2>
+<mat-dialog-content class="mat-typography" style="max-width: 800px">
+  <form #userForm="ngForm">
+
+    <div class="row m-t-20">
+      <div class="col-lg-6"><mat-form-field appearance="outline" class="w-100">
+          <input type="text" matInput required id="name" name="name" [(ngModel)]="local_data.name"
+            placeholder="Name " />
+        </mat-form-field></div>
+      <div class="col-lg-6">
+
+        <mat-form-field appearance="outline" class="w-100">
+          <input type="text" matInput required id="last_name" name="last_name" [(ngModel)]="local_data.last_name"
+            placeholder="Last name" />
+        </mat-form-field>
+      </div> 
+
+    </div>
+    <mat-form-field appearance="outline" class="w-100">
+      <input type="text" matInput id="razon_social" name="razon_social" [(ngModel)]="local_data.razon_social"
+        placeholder="Razon Social here" />
+    </mat-form-field>
+
+    <div class="row m-t-20">
+      <div class="col-lg-6">
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Doctype</mat-label>
+          <input type="text" placeholder="Pick one" aria-label="Doctype" matInput [formControl]="doctypeControl"
+            [matAutocomplete]="doctypeaut" />
+          <mat-autocomplete #doctypeaut="matAutocomplete" [displayWith]="displayDoctype">
+            <mat-option *ngFor="let doctype of filteredDoctypes | async" [value]="doctype">
+              {{ doctype.description }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+
+      </div>
+      <div class="col-lg-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <input type="text" matInput required id="doc_number" name="doc_number" [(ngModel)]="local_data.doc_number"
+            placeholder=" Doc Number " />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row m-t-20">
+      <div class="col-lg-6">
+        
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Tax Condition</mat-label>
+          <input type="text" placeholder="Pick one" aria-label="Doctype" matInput [formControl]="taxconditionControl"
+            [matAutocomplete]="taxconditionaut" />
+          <mat-autocomplete #taxconditionaut="matAutocomplete" [displayWith]="displayTaxCondition">
+            <mat-option *ngFor="let taxcondition of filteredTaxconditions | async" [value]="taxcondition">
+              {{ taxcondition.description }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+
+      </div>
+      <div class="col-lg-6">
+        <mat-checkbox color="primary" [(ngModel)]="local_data.designer">Designer</mat-checkbox>
+      </div>
+    </div>
+
+
+    <mat-form-field appearance="outline" class="w-100">
+      <input type="text" matInput required id="email" name="email" [(ngModel)]="local_data.email"
+        placeholder="Email here" />
+    </mat-form-field>
+
+    <div class="row m-t-20">
+      <div class="col-lg-6">
+
+        <mat-form-field appearance="outline" class="w-100">
+          <input type="text" matInput required id="contactlinked" name="cellphone" [(ngModel)]="local_data.cellphone"
+            placeholder="Cellphone  here" />
+        </mat-form-field>
+
+
+      </div>
+      <div class="col-lg-6">
+        <mat-form-field appearance="outline" class="w-100">
+          <input type="text" matInput id="phone" name="phone" [(ngModel)]="local_data.phone"
+            placeholder="Phone  here" />
+        </mat-form-field>
+      </div>
+    </div>
+
+
+
+  </form>
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions class="p-24">
+  <button mat-stroked-button color="warn" mat-dialog-close>Cancel</button>
+  <button mat-flat-button [mat-dialog-close]="true" [disabled]="!userForm.form.valid" color="primary"
+    (click)="doAction();">
+    Save
+  </button>
+</mat-dialog-actions>
