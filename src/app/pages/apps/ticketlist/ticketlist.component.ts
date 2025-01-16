@@ -11,15 +11,16 @@ import { CommonModule } from '@angular/common';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderService } from 'src/app/services/order.service';
-import { CustomerService } from 'src/app/services/customer.service';
-import { Order } from 'src/app/models/order';
-import { Customer } from 'src/app/models/customer';
+ import { Order } from 'src/app/models/order'; 
 import { Status } from 'src/app/models/status';
 import { StatusService } from 'src/app/services/status.service';
 import { lastValueFrom, Observable, map, startWith } from 'rxjs';
 import { order } from '../invoice/invoice';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSort } from '@angular/material/sort';
+import { Contact } from 'src/app/models/contact';
+import { ContactListService } from 'src/app/services/contact-list.service';
+import { ContactService } from 'src/app/services/contact.service';
 
 
 @Component({
@@ -54,13 +55,13 @@ export class AppTicketlistComponent implements AfterViewInit {
     'action',
   ];
   dataSource!: MatTableDataSource<Order>;
-  contacts: Customer[];
+  contacts: Contact[];
   statuss: Status[];
   orders: any;
 
   constructor(public dialog: MatDialog,
     public ordersService: OrderService,
-    public customerService: CustomerService
+    public customerService: ContactListService
   ) {
 
 
@@ -195,19 +196,19 @@ export class AppTicketDialogContentComponent implements OnInit {
   action: string;
   // tslint:disable-next-line - Disables all
   local_data: Order; 
-  selected_customer: Customer | null;
+  selected_customer: Contact | null;
   statuss: any[] = [];
 
   ///autocomplete
   customercontrol = new FormControl();
   filteredContacts!: Observable<any[]>;
-  customers: Customer[] = [];
+  customers: Contact[] = [];
   /////
 
 
   constructor(
     public dialogRef: MatDialogRef<AppTicketDialogContentComponent>,
-    private customerService: CustomerService,
+    private customerService: ContactService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
 

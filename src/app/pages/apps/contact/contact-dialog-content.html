@@ -4,13 +4,17 @@
 
     <div class="row m-t-20">
       <div class="col-lg-6"><mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="name" name="name" [(ngModel)]="local_data.name"
+          <input type="text" matInput required id="name" name="name" 
+          [(ngModel)]="local_data.name"
+          [ngModelOptions]="{ standalone: true }"
             placeholder="Name " />
         </mat-form-field></div>
       <div class="col-lg-6">
 
         <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="last_name" name="last_name" [(ngModel)]="local_data.last_name"
+          <input type="text" matInput required id="last_name" name="last_name" 
+          [(ngModel)]="local_data.last_name"
+          [ngModelOptions]="{ standalone: true }"
             placeholder="Last name" />
         </mat-form-field>
       </div> 
@@ -26,8 +30,14 @@
 
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Select Doctype</mat-label>
-          <input type="text" placeholder="Pick one" aria-label="Doctype" matInput [formControl]="doctypeControl"
-            [matAutocomplete]="doctypeaut" />
+          <input
+            type="text"
+            placeholder="Pick one"
+            aria-label="Doctype"
+            matInput
+            [formControl]="doctypeControl"
+            [matAutocomplete]="doctypeaut"
+          />
           <mat-autocomplete #doctypeaut="matAutocomplete" [displayWith]="displayDoctype">
             <mat-option *ngFor="let doctype of filteredDoctypes | async" [value]="doctype">
               {{ doctype.description }}
@@ -39,7 +49,9 @@
       </div>
       <div class="col-lg-6">
         <mat-form-field appearance="outline" class="w-100">
-          <input type="text" matInput required id="doc_number" name="doc_number" [(ngModel)]="local_data.doc_number"
+          <input type="text" matInput required id="doc_number" name="doc_number" 
+          [(ngModel)]="local_data.doc_number"
+          [ngModelOptions]="{ standalone: true }"
             placeholder=" Doc Number " />
         </mat-form-field>
       </div>
@@ -51,7 +63,8 @@
 
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Select Tax Condition</mat-label>
-          <input type="text" placeholder="Pick one" aria-label="Doctype" matInput [formControl]="taxconditionControl"
+          <input type="text" placeholder="Pick one" aria-label="Doctype" matInput 
+          [formControl]="taxconditionControl" name="tax_condition"
             [matAutocomplete]="taxconditionaut" />
           <mat-autocomplete #taxconditionaut="matAutocomplete" [displayWith]="displayTaxCondition">
             <mat-option *ngFor="let taxcondition of filteredTaxconditions | async" [value]="taxcondition">
@@ -60,13 +73,12 @@
           </mat-autocomplete>
         </mat-form-field>
 
-
       </div>
       <div class="col-lg-6">
-        <mat-checkbox color="primary" [(ngModel)]="local_data.designer">Designer</mat-checkbox>
+        <mat-checkbox color="primary" [(ngModel)]="local_data.designer"
+        >Designer</mat-checkbox>
       </div>
     </div>
-
 
     <mat-form-field appearance="outline" class="w-100">
       <input type="text" matInput required id="email" name="email" [(ngModel)]="local_data.email"

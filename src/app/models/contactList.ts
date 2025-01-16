@@ -1,6 +1,8 @@
+import { Address } from "./address";
 import { Doctype } from "./doctype";
+import { Taxcondition } from "./taxcondition";
 
-export interface Customer {
+export interface ContactList {
     id: number,
     razon_social: string,
     last_name: string,
@@ -8,12 +10,13 @@ export interface Customer {
     email: string,
     phone: string,
     cellphone: string,
-    doc_number: string,
+    doc_number: number,
     designer: string,
     enable?: string,
     supplier?: string,
     created_at?: Date,
     updated_at?: Date,
-    tax_condition: number,
-    doc_type: number
+    tax_condition: Taxcondition,
+    doc_type: Doctype,
+    addresses: Address[]
 }

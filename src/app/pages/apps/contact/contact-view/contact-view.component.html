@@ -1,0 +1,99 @@
+<mat-card class="cardWithShadow">
+    <mat-card-content class="p-24">
+    @if(contactDetail){
+    <span>
+        <div class="d-flex justify-content-between align-items-center">
+          <h1>{{contactDetail.name | uppercase}}</h1>
+          <button mat-raised-button color="primary" [routerLink]="['/apps/editContact', contactDetail.id]"  >
+            Edit Contact
+          </button>
+        </div>
+        <div class="row m-b-24">
+            <div class="col-sm-4 d-flex align-items-center">
+                <h4 class="mat-subtitle-2 f-s-18 f-w-600">#{{ contactDetail.razon_social}}</h4>
+            </div>
+        </div>
+        <div class="row p-y-24">
+            <div class="col-sm-6">
+              <span class="f-w-600 f-s-15 mat-body-1"> Customer Data: </span>
+              <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{ contactDetail.razon_social }}
+              </h6>
+              <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{ contactDetail.doc_number }}
+              </h6>
+              
+            </div>
+            <div class="col-sm-6">
+                <span class="f-w-600 f-s-15 mat-body-1"> Contact Data: </span>
+                <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+                    {{ contactDetail.addresses[0].address_str  | uppercase}}
+                  </h6>
+                  <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+                    {{ contactDetail.phone }}
+                  </h6>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div class="row p-y-12">
+            <div class="col-sm-4">
+              <span class="f-w-600 f-s-15 mat-body-1"> Ordenes Pendientes: </span>
+              <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{ 5 }}
+              </h6>
+            </div>
+            <div class="col-sm-4 text-center">
+                <span class="f-w-600 f-s-15 mat-body-1"> Ordenes entregadas NO facturadas: </span>
+                <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+                  {{ 3}}
+                </h6>
+              </div>
+            <div class="col-sm-4 text-right">
+              <span class="f-w-600 f-s-15 mat-body-1"> Facturas Impagas: </span>
+              <h6 class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2">
+                {{ 2}}
+              </h6>
+            </div>
+          </div>
+         
+          <div class="text-right m-t-30">
+            <h5 class="m-b-5 f-w-600 f-s-16">
+              Sub total: $ {{ 324352.45}}
+            </h5>
+            <span class="f-w-600 f-s-16">Iva: 21%</span>
+            <h3 class="m-b-0 b-t-1 p-t-20 f-s-18">
+              Grand Total: ${{ 324352.45 }}
+            </h3>
+          </div>
+
+          <mat-divider></mat-divider>
+          <div>
+            <h3>Ordenes</h3>
+            <div *ngIf="orders">
+              <li *ngFor="let order of orders">
+                {{ order.id }}
+                {{ order.status_desc }}
+                {{ order.lines }}
+              </li> 
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+          <div>
+            <h3>Facturas</h3>
+            <div *ngIf="invoices">
+              <li *ngFor="let invoice of invoices">
+                {{ invoice.id }}  
+                {{ invoice.status_desc }}
+                {{ invoice.lines }}
+              </li> 
+            </div>
+          </div>
+ 
+
+
+    </span>
+    }
+    </mat-card-content>
+</mat-card>

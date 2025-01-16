@@ -18,8 +18,8 @@ import { Estimate } from 'src/app/models/estimate';
 import { AddedDialogComponent } from '../../invoice/add-invoice/added-dialog/added-dialog.component';
 import { EstimateService } from 'src/app/services/estimate.service';
 import { lastValueFrom, map, Observable, startWith } from 'rxjs';
-import { Customer } from 'src/app/models/customer';
-import { CustomerService } from 'src/app/services/customer.service';
+import { Contact } from 'src/app/models/contact';
+import { ContactService } from 'src/app/services/contact.service';
 import { ProductService } from 'src/app/services/product.service';
 
 
@@ -62,8 +62,8 @@ export class AddEstimateComponent implements OnInit {
   ///autocomplete
   customercontrol = new FormControl();
   filteredContacts!: Observable<any[]>;
-  customers: Customer[] = [];
-  selected_customer: Customer | null;
+  customers: Contact[] = [];
+  selected_customer: Contact | null;
   ///
 
 
@@ -79,7 +79,7 @@ export class AddEstimateComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private estimateService: EstimateService,
-    private custormerService: CustomerService,
+    private custormerService: ContactService ,
     private productService: ProductService,
     private router: Router,
     public dialog: MatDialog

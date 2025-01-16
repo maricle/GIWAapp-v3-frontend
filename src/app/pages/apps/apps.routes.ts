@@ -22,6 +22,8 @@ import { AppEditInvoiceComponent } from './invoice/edit-invoice/edit-invoice.com
 import { EstimateListComponent } from './estimate/estimate-list/estimate-list.component';
 import { EstimateViewComponent } from './estimate/estimate-view/estimate-view.component';
 import { AddEstimateComponent } from './estimate/add-estimate/add-estimate.component';
+import { ContactViewComponent } from './contact/contact-view/contact-view.component';
+import { ContactEditComponent } from './contact/contact-edit/contact-edit.component';
 
 export const AppsRoutes: Routes = [
   {
@@ -126,6 +128,28 @@ export const AppsRoutes: Routes = [
           urls: [
             { title: 'Dashboard', url: '/dashboards/dashboard1' },
             { title: 'Tickets' },
+          ],
+        },
+      },
+      {
+        path: 'viewContact/:id',
+        component: ContactViewComponent,
+        data: {
+          title: 'View Contact',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'View Contact' },
+          ],
+        },
+      },
+      {
+        path: 'editContact/:id',
+        component: ContactEditComponent,
+        data: {
+          title: 'Edit Contact',
+          urls: [
+            { title: 'Dashboard', url: '/dashboards/dashboard1' },
+            { title: 'Edit Contact' },
           ],
         },
       },

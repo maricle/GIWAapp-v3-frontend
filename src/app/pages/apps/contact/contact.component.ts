@@ -8,17 +8,18 @@ import {
 // import { ContactService } from './contact.service';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
-import { CustomerService } from 'src/app/services/customer.service';
 import { lastValueFrom, map, Observable, startWith } from 'rxjs';
-import { Customer } from 'src/app/models/customer';
 import { Doctype } from 'src/app/models/doctype';
 import { Taxcondition } from 'src/app/models/taxcondition';
 import { DoctypeService } from 'src/app/services/doctype.service';
 import { TaxconditionService } from 'src/app/services/taxcondition.service';
 import { TranslateModule } from '@ngx-translate/core';
- 
+import { RouterModule } from '@angular/router';
+import { ContactList } from 'src/app/models/contactList';
+import { ContactListService } from 'src/app/services/contact-list.service';
+
 
 @Component({
   templateUrl: './contact.component.html',
@@ -26,6 +27,7 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     MaterialModule,
     FormsModule,
+    RouterModule,
     ReactiveFormsModule,
     TablerIconsModule,
     TranslateModule
@@ -34,14 +36,14 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class AppContactComponent implements OnInit {
   closeResult = '';
-  contacts: Customer[] | undefined = [];
-  contactsFiltered: Customer[] | undefined = [];
-  items: Customer[] = [];
+  contacts: ContactList[] | undefined = [];
+  contactsFiltered: ContactList[] | undefined = [];
+  items: ContactList[] = [];
 
   doctypes: Doctype[] = [];
   taxconditions: Taxcondition[] = [];
 
-  customer: Customer = {} as Customer;
+  customer: ContactList = {} as ContactList;
 
   searchText: any;
   txtContactname = '';
@@ -56,7 +58,7 @@ export class AppContactComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private customerService: CustomerService,
+    private customerService: ContactListService,
     private doctypeService: DoctypeService,
     private taxconditionService: TaxconditionService
   ) {
@@ -140,7 +142,7 @@ export class AppContactComponent implements OnInit {
   }
 
 
-  filter(v: string): Customer[] | undefined {
+  filter(v: string): ContactList[] | undefined {
 
     this.contactsFiltered = this.contacts?.filter(
       (x) => x.name.toLowerCase().indexOf(v.toLowerCase()) !== -1
@@ -148,10 +150,10 @@ export class AppContactComponent implements OnInit {
     return this.contactsFiltered;
   }
 
- 
+
 
   // tslint:disable-next-line - Disables all
-  async addContact(item: Customer): Promise<void> {
+  async addContact(item: ContactList): Promise<void> {
     console.log(item);
 
     if (item.name?.trim()) {
@@ -167,7 +169,7 @@ export class AppContactComponent implements OnInit {
         this.contacts?.push(item);
       }
 
-      // this.contacts = [...this.items];
+      // this.contacts = [...this.items]; 
       await this.loadContacts();
 
     }
@@ -200,17 +202,21 @@ export class AppContactComponent implements OnInit {
 export class AppContactDialogContentComponent implements OnInit {
   action: string;
   // tslint:disable-next-line - Disables all
-  local_data: Customer;
+  local_data: ContactList;
+  doctype: Doctype;
+  taxcondition: Taxcondition;
 
   // filter option DT
   doctypeControl = new FormControl();
-  filteredDoctypes!: Observable<any[]>;
+  filteredDoctypes!: Observable<Doctype[]>;
   doctypes: Doctype[] = [];
 
   //filter taxconditions   TC
   taxconditionControl = new FormControl();
   filteredTaxconditions!: Observable<any[]>;
   taxconditions: Taxcondition[] = [];
+
+userForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<AppContactDialogContentComponent>,
@@ -220,15 +226,37 @@ export class AppContactDialogContentComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     console.log(data);
+    this.getDocTypes();
+    this.getTaxcondition();
 
-    this.local_data = data;
+
+    this.local_data = { ...data };
+    this.local_data.doc_type = data.doc_type;
+    this.local_data.tax_condition = data.tax_condition;
     this.action = data.action;
+
   }
 
 
   ngOnInit(): void {
-    this.getDocTypes();
-    this.getTaxcondition();
+
+
+    // set the value of the doc_type on edit  mode
+
+
+    if (this.local_data.id>0) {
+      console.log(this.local_data);
+      console.log('on edit');
+      this.doctypeControl.setValue(this.local_data.doc_type.description);
+      this.taxconditionControl.setValue(this.local_data.tax_condition.description);
+
+    }
+
+
+
+
+
+
     // filter option DT
     this.filteredDoctypes = this.doctypeControl.valueChanges.pipe(
       startWith(''),
@@ -249,6 +277,9 @@ export class AppContactDialogContentComponent implements OnInit {
     const filterValue = description.toLowerCase();
     return this.doctypes.filter(option => option.description.toLowerCase().includes(filterValue));
   }
+  displayDoctype(doctype: any): string {
+    return doctype && doctype.description ? doctype.description : '';
+  }
 
 
   // filter option TC
@@ -257,9 +288,8 @@ export class AppContactDialogContentComponent implements OnInit {
     return this.taxconditions.filter(option => option.description.toLowerCase().includes(filterValue));
   }
 
-  displayDoctype(doctype: any): string {
-    return doctype && doctype.description ? doctype.description : '';
-  }
+
+
   displayTaxCondition(taxc: any): string {
     return taxc && taxc.description ? taxc.description : '';
   }
@@ -285,8 +315,14 @@ export class AppContactDialogContentComponent implements OnInit {
   }
 
   doAction(): void {
+    console.log(this.local_data);
+
+    this.local_data.doc_type = this.doctypeControl.value;
+    this.local_data.tax_condition = this.taxconditionControl.value;
+    // this.dialogRef.close(this.local_data);
     this.dialogRef.close({ event: 'Add', data: this.local_data });
     //add save functions
+
   }
 
   closeDialog(): void {

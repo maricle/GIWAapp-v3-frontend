@@ -26,7 +26,7 @@
   <div class="col-sm-6 col-lg-4">
     <mat-card class="cardWithShadow">
       <mat-card-content class="text-center p-24">
-        <img src=" assets/images/profile/user-2.jpg" class="rounded-circle border p-5" width="100" />
+        <img src=" assets/images/profile/user-2.jpg" class="rounded-circle border p-5" width="100"   [routerLink]="['/apps/viewContact/', contact.id]"/>
         <h4 mat-card-title class="card-title m-t-16 m-b-0">
           {{ contact.name }} {{ contact.last_name }}
         </h4>
@@ -37,7 +37,7 @@
         </div>
         <div class="m-t-20">
           <span class="f-s-14">
-            {{ getDocDetail( contact.doc_type)}}: {{ contact.doc_number}}
+            {{  contact.doc_type.description}}: {{ contact.doc_number}}
             <br />
             <br />
             Cell: {{ contact.cellphone }}</span>
@@ -66,7 +66,7 @@
             class="mat-subtitle-2 text-decoration-none f-s-14 f-w-500 d-flex justify-content-center align-items-center">
             <i-tabler name="brand-facebook" class="icon-18 m-r-4"></i-tabler>
 
-            {{getTaxDetail( contact.tax_condition) }}
+            {{ contact.tax_condition.description }}
           </a>
         </div>
       </div>

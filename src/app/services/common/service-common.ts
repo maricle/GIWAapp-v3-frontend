@@ -14,7 +14,7 @@ export abstract class ServiceCommon<T> {
   }
 
   getById(id: number): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}/${id}`);
+    return this.http.get<T>(`${this.baseUrl}${id}/`);
   }
 
   create(item: T): Observable<T> {
@@ -22,10 +22,10 @@ export abstract class ServiceCommon<T> {
   }
 
   update(id: number, item: T): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}/${id}`, item);
+    return this.http.put<T>(`${this.baseUrl}${id}/`, item);
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}${id}/`);
   }
 }
