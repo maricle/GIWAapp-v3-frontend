@@ -84,10 +84,16 @@
                 <mat-divider></mat-divider>
                 
                 <div class="col-12 mt-4">
-                    <h3>Addresses</h3>
+                    <div class="d-flex text-left align-items-center mb-3">
+                        <h3 class="m-0">Addresses</h3>
+                        <button mat-icon-button color="accent" type="button" (click)="addAddress()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                     
                     <div formArrayName="addresses">
                         <div *ngFor="let address of addresses.controls; let i=index" [formGroupName]="i" class="row g-3 mb-3">
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>Street</mat-label>
                                     <input matInput placeholder="Enter street" formControlName="street" required>
@@ -107,12 +113,6 @@
                             </div>
                             <div class="col-sm-2">
                                 <mat-form-field appearance="outline" class="w-100">
-                                    <mat-label>Province</mat-label>
-                                    <input matInput placeholder="Enter province" formControlName="province">
-                                </mat-form-field>
-                            </div>
-                            <div class="col-sm-2">
-                                <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>City</mat-label>
                                     <input matInput placeholder="Enter city" formControlName="city" required>
                                     <mat-error *ngIf="address.get('city')?.hasError('required')">
@@ -122,25 +122,29 @@
                             </div>
                             <div class="col-sm-2">
                                 <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Province</mat-label>
+                                    <input matInput placeholder="Enter province" formControlName="province">
+                                </mat-form-field>
+                            </div>
+                           
+                            <div class="col-sm-2">
+                                <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>Postal Code</mat-label>
                                     <input matInput placeholder="Enter postal code" formControlName="postal_code">
                                 </mat-form-field>
+                            </div>
+                            <div class="col-sm-1">
+                            <mat-checkbox formControlName="default">Default </mat-checkbox>
                             </div>
                             <div class="col-sm-1 d-flex align-items-center">
                                 <button mat-icon-button color="warn" type="button" (click)="removeAddress(i)">
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </div>
-                            <div class="col-sm-12">
-                                <mat-checkbox formControlName="default">Default Address</mat-checkbox>
-                            </div>
+                            
                         </div>
                     </div>
-                    <div class="text-end">
-                        <button mat-raised-button color="accent" type="button" (click)="addAddress()">
-                            Add Address
-                        </button>
-                    </div>
+                    
                 </div>
                 <div class="col-12 text-end mt-4">
                     <button mat-raised-button color="primary" type="submit" [disabled]="!contactform.valid">

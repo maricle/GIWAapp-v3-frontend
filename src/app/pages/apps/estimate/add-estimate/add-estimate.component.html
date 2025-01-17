@@ -1,14 +1,12 @@
-<p>add-estimate works!</p>
 <mat-card class="cardWithShadow">
   <mat-card-content class=" p-24">
-    <form #invoiceForm="ngForm">
+    <form [formGroup]="addForm" (ngSubmit)="saveDetail()">
       <div class="row justify-content-between m-b-24">
         <div class="col-sm-4 d-flex align-items-center">
           <h4 class="mat-subtitle-2 f-s-18 f-w-600">
             #
-            <!-- <span name="id" [(ngModel)]="estimate.id" ngDefaultControl>
-                {{ estimate.id }}</span -->
-            >
+            <span *ngIf="estimate.id!=0" name="id" formControlName="id">
+              {{ estimate.id }}</span>
           </h4>
         </div>
         <div class="col-sm-4 text-right">
@@ -24,71 +22,70 @@
       <mat-divider></mat-divider>
 
       <div class="row p-y-24 justify-content-between">
-        <div class="col-sm-4">
-          <span class="f-w-600 f-s-15 mat-body-1 d-block m-b-8">
-            Status:
-          </span>
-          <mat-form-field appearance="outline" class="w-100 theme-select">
-            <mat-select name="satus" [(ngModel)]="estimate.draft">
-              <mat-option [value]="true"> Draft </mat-option>
-              <mat-option [value]="false"> Approved </mat-option>
-            </mat-select>
-          </mat-form-field>
+        <div class="col-sm-6 d-flex align-items-center">
+          <div class="d-flex align-items-center w-100">
+            <span class="f-w-600 f-s-15 mat-body-1 m-r-4">Status:</span>
+            <mat-form-field appearance="outline" class="theme-select">
+              <mat-select formControlName="draft">
+                <mat-option [value]="true"> Draft </mat-option>
+                <mat-option [value]="false"> Approved </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="col-sm-6 d-flex align-items-center justify-content-end">
-          <div class="text-right">
-            <span class="f-w-600 f-s-15 mat-body-1 d-block m-b-8">
+        <div class="col-sm-6 d-flex align-items-center">
+          <div class="d-flex align-items-center w-100 justify-content-end">
+            <span class="f-w-600 f-s-15 mat-body-1 m-r-4">
               Order Date
             </span>
-            <h6 name="date" class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2" [(ngModel)]="estimate.date" ngDefaultControl>
+            <!-- <h6 name="date" class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2" formControlName="date">
               {{ estimate.date | date : "dd-MM-yyyy" }}
-            </h6>
+            </h6> -->
+            <mat-form-field appearance="outline" class="w-80 hide-hint">
+              <input matInput placeholder="Enter Date" name="date" formControlName="date">
+            </mat-form-field>
           </div>
         </div>
       </div>
 
-      <mat-divider></mat-divider>
 
-      <div class="row m-y-24 p-t-24">
+      <div class="row  ">
         <div class="col-sm-6">
-          <!-- <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Customer</mat-label>
-            <input matInput placeholder="Customer" name="from" [(ngModel)]="estimate.contact.name" />
-          </mat-form-field> -->
-
 
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Select Customer</mat-label>
-            <input type="text" placeholder="Pick one" aria-label="Doctype" matInput [formControl]="customercontrol"
-              [matAutocomplete]="cutomer_aut" />
-            <mat-autocomplete #cutomer_aut="matAutocomplete" [displayWith]="displayCustomer">
+            <input type="text" placeholder="Pick one" aria-label="Customer" matInput [formControl]="customercontrol"
+              [matAutocomplete]="customer_auto">
+            <mat-autocomplete #customer_auto="matAutocomplete" [displayWith]="displayCustomer">
               <mat-option *ngFor="let customer of filteredContacts | async" [value]="customer">
-                {{ customer.name }}
+                {{customer.name}} {{customer.last_name}} <span *ngIf="customer.razon_social"
+                  class="f-s-8 f-w-400 ">"{{customer.razon_social}}"</span>
               </mat-option>
             </mat-autocomplete>
-
           </mat-form-field>
+
         </div>
         <div class="col-sm-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>CUIT/DNI</mat-label>
-            <input matInput placeholder="CUIT / DNI" name="cuit" [value]="estimate.contact.doc_number" />
+            <input matInput placeholder="CUIT / DNI" name="cuit" [value]="customercontrol.value?.doc_number" readonly />
           </mat-form-field>
         </div>
         <div class="col-sm-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Email Address</mat-label>
-            <input matInput placeholder="Enter From Address" name="fromAddress" [(ngModel)]="estimate.contact.email"/>
+            <input matInput placeholder="Enter From Address" name="fromAddress" [value]="customercontrol.value?.email" readonly />
           </mat-form-field>
         </div>
         <div class="col-sm-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Cellphone</mat-label>
-            <input matInput placeholder="Enter To Address" name="toAddress" [(ngModel)]="estimate.contact.cellphone" />
+            <input matInput placeholder="Enter To Address" name="toAddress" [value]="customercontrol.value?.cellphone" readonly />
           </mat-form-field>
         </div>
       </div>
     </form>
+
 
     <div [formGroup]="addForm">
       <div class="table-responsive">
@@ -112,15 +109,23 @@
 
               <td class="p-16">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
-                  <input type="text" matInput class="form-control" [formControl]="row.get('itemName')"
-                    (input)="itemsChanged()" />
+                  <input type="text" matInput [formControl]="itemcontrol" [matAutocomplete]="autoitem"
+                    placeholder="Search item" (ngModelChange)="onItemSelected($event, row)">
+                  <mat-autocomplete #autoitem="matAutocomplete" [displayWith]="displayItem"
+                    (optionSelected)="onItemSelected($event.option.value, row)">
+                    <mat-option *ngFor="let item of filteredItems | async" [value]="item">
+                      {{item.name}} -{{item.category}}
+
+                    </mat-option>
+                  </mat-autocomplete>
                 </mat-form-field>
+
               </td>
 
               <td class="p-16">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
                   <input type="number" matInput class="form-control" min="1" [formControl]="row.get('unitPrice')"
-                    (input)="itemsChanged()" />
+                    (input)="itemsChanged()" readonly />
                 </mat-form-field>
               </td>
 

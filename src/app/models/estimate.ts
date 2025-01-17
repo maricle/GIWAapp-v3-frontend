@@ -1,13 +1,15 @@
+import { EstimateLine } from "./estimateLine";
+
  
 export interface Estimate {
     id?: number,
     doctype: string,
     date: Date,     
-    description: string, 
-    // tipo_comprobante : number,
-    // doc_number?: number,
+    description?: string, 
+    tipo_comprobante ?: number,
+    doc_number?: number,
     // order?:number,
-    puntodeventa?:string,
+    puntodeventa:string,
     draft:boolean,
     sent_mail :boolean,
     tag_sucursal :string,
@@ -23,6 +25,6 @@ export interface Estimate {
     // money ?: string,
     // mon_cotiz ?: string,
     deleted ?: string, 
-    lines: any[]
+    lines: EstimateLine[]
 
 }

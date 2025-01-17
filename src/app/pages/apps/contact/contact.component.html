@@ -13,7 +13,7 @@
       <div class="col-sm-2 d-flex align-items-center"> <i-tabler name="x" class="icon-20"
           (click)="clearFilter();"></i-tabler> Clear filter</div>
       <div class="col-sm-6 text-end d-flex align-items-center justify-content-end">
-        <button mat-flat-button (click)="openDialog('Add',{})" color="primary">
+        <button mat-flat-button [routerLink]="['/apps/editContact/0']" color="primary">
           {{'Add Contact' | translate }}
         </button>
       </div>

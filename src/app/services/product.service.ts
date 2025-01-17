@@ -12,7 +12,7 @@ export class ProductService extends ServiceCommon<Product> {
 
 
   constructor(http: HttpClient) {
-    super(http, environment.apiUrl + 'product/');  // Pasa la URL base específica para "customers"
+    super(http, environment.apiUrl + 'products/');  // Pasa la URL base específica para "customers"
   }
 
 

@@ -275,7 +275,7 @@ export const AppsRoutes: Routes = [
         },
       },
       {
-        path: 'addEstimate',
+        path: 'addEstimate/:id',
         component: AddEstimateComponent,
         data: {
           title: 'Add Estimate',

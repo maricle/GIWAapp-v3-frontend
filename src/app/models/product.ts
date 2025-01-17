@@ -7,6 +7,8 @@ export interface Product {
     to_sell: boolean,
     enable: number,
     tax: any,
+    category: string,
+    category_name: string,
 
 
 }

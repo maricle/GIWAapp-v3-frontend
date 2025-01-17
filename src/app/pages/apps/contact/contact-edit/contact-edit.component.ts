@@ -28,12 +28,11 @@ import { TaxconditionService } from 'src/app/services/taxcondition.service';
   styleUrl: './contact-edit.component.scss'
 })
 export class ContactEditComponent implements OnInit {
-  contactform: FormGroup;
-  // contact: Contact;
+  contactform: FormGroup; 
   data: Contact;
   doctypes: Doctype[] = [];
   taxconditions: Taxcondition[] = [];
-  id: any; 
+  id: any;
 
 
   constructor(
@@ -44,14 +43,13 @@ export class ContactEditComponent implements OnInit {
     private contactService: ContactService,
     private router: Router
   ) {
-    this.id = this.activatedRoute.snapshot.params['id'];
-    this.contactService.getById(this.id).subscribe((data: any) => {
-      this.data = data;
-
-      this.loadContact(data);
-    });
     this.getDocTypes();
     this.getTaxcondition();
+
+    this.id = this.activatedRoute.snapshot.params['id'];
+
+
+
 
     this.contactform = this.fb.group({
       name: ['', Validators.required],
@@ -64,38 +62,30 @@ export class ContactEditComponent implements OnInit {
       designer: [''],
       enable: ['', Validators.required],
       supplier: [false],
-      tax_condition: [],
+      tax_condition: [5],
       doc_type: [96],
       addresses: this.fb.array([])
     });
 
-  //   if (this.data) {
-  //     console.log(this.data);
-  //     this.contactform.patchValue({
-  //       name: this.data.name,
-  //       last_name: this.data.last_name,
-  //       email: this.data.email,
-  //       phone: this.data.phone,
-  //       razon_social: this.data.razon_social,
-  //       cellphone: this.data.cellphone,
-  //       doc_number: this.data.doc_number,
-  //       designer: this.data.designer,
-  //       enable: this.data.enable,
-  //       supplier: this.data.supplier,
-  //       tax_condition: this.data.tax_condition,
-  //       doc_type: this.data.doc_type,
-  //       addresses: this.data.addresses
-  //     });
-  //   }
+
   }
 
   ngOnInit(): void {
-    if (this.data) {
-      this.contactform.patchValue(this.data);
+    if (this.id) {
+
+      this.contactService.getById(this.id).subscribe((data: any) => {
+        this.data = data;
+        this.loadContact(data);
+      });
+    } else {
+      this.contactform.patchValue({
+        doc_type: 96,
+        tax_condition: 5, 
+      });
     }
   }
 
- 
+
   // Get Doctypes
   async getDocTypes() {
     try {
@@ -127,7 +117,7 @@ export class ContactEditComponent implements OnInit {
       province: [''],
       city: [''],
       postal_code: [''],
-      default: [false]  
+      default: [false]
     });
   }
 
@@ -141,19 +131,19 @@ export class ContactEditComponent implements OnInit {
 
   loadContact(data: ContactList) {
     this.contactform.patchValue(data);
-    
+
     // Clear existing addresses
     while (this.addresses.length) {
       this.addresses.removeAt(0);
     }
-    
+
     // Add addresses from data
     if (data.addresses && Array.isArray(data.addresses)) {
       data.addresses.forEach(address => {
         this.addresses.push(this.fb.group(address));
       });
     }
-    
+
     // If no addresses exist, add at least one empty address form
     if (this.addresses.length === 0) {
       this.addAddress();
