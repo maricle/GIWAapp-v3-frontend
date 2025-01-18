@@ -1,9 +1,12 @@
 export interface EstimateLine {
     id?: number,
     itemName: string,
-    units: number,
-    unitPrice: number,
-    tax_percentage: number,
-    tax_value: number,
+    description?: string,
+    amount: number,
+    unit_price: number,
+    tax_percentage?: number,
+    tax_value?: number,
     itemTotal: number,
+    product_id?: number,
+    invoice_id?: number,
 }

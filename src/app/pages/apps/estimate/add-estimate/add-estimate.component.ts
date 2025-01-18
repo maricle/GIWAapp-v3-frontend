@@ -23,6 +23,8 @@ import { Contact } from 'src/app/models/contact';
 import { ContactService } from 'src/app/services/contact.service';
 import { ProductService } from 'src/app/services/product.service';
 import { Product } from 'src/app/models/product';
+import { EstimateLine } from 'src/app/models/estimateLine';
+import { AppDialogComponent } from 'src/app/pages/ui-components/dialog/dialog.component';
 
 
 @Component({
@@ -43,10 +45,14 @@ export class AddEstimateComponent implements OnInit {
 
   id: any;
   addForm: FormGroup | any;
+  customerForm: FormGroup | any;
   rows: FormArray;
+
+
+
   estimate: Estimate = {
     id: 0,
-    date: new Date(),
+    date: new Date().toISOString().split('T')[0],
     contact: 15, // Valor predeterminado para contacto
     doctype: 'estimate', // Tipo de documento predeterminado
     puntodeventa: '1',
@@ -54,7 +60,8 @@ export class AddEstimateComponent implements OnInit {
     description: '',
     draft: false,
     sent_mail: false,
-    tag_sucursal: 'oficina'
+    tag_sucursal: 'oficina',
+
   };
   subTotal: number = 0;
   vat: number = 0;
@@ -85,25 +92,32 @@ export class AddEstimateComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog
   ) {
+
+
     this.addForm = this.fb.group({
       id: [''],
       date: [new Date(), Validators.required],
       contact: ['', Validators.required],
       doctype: ['estimate'],
       puntodeventa: ['1', Validators.required],
-      lines: [''],
       description: [''],
       draft: [false],
       sent_mail: [false],
       tag_sucursal: ['oficina'],
       imp_total: [0],
-      imp_neto: [0],  
-      
+      imp_neto: [0],
+      lines: this.fb.array([]),
     });
 
-    this.rows = this.fb.array([]);
-    this.addForm.addControl('rows', this.rows);
-    this.rows.push(this.createItemFormGroup());
+    this.customerForm = this.fb.group({
+      customer: ['', Validators.required],
+      docNumber: ['', Validators.required],
+      email: ['', Validators.required],
+      cellphone: ['', Validators.required]
+    });
+    // this.rows = this.fb.array([]);
+    // this.addForm.addControl('lines', this.rows);
+    this.addForm.get('lines')?.push(this.createItemFormGroup());
 
   }
   ////////////////////////////////////////////////////////////////////////////////////
@@ -117,25 +131,10 @@ export class AddEstimateComponent implements OnInit {
     // tslint:disable-next-line - Disables all
 
     ///////////////////////////////////////////////////////////
-    this.loadEstimateData(this.id);
+    // this.loadEstimateData(this.id);
 
 
-    if (!this.id || this.id == 0) {
- 
-      this.estimate.contact = this.customers.find(customer => customer.id === 15) || null;
-      console.log(this.estimate.contact);
-      this.addForm.patchValue(this.estimate);
-      console.log(this.estimate);
-      console.log('new');
-    }else{
-      console.log(this.estimate);
-      this.estimateService.getById(this.id).subscribe((data: any) => {
-        this.estimate = data;
-        // this.estimate.contact = this.customers.find(customer => customer.id === this.estimate.contact) || null;
-        // this.loadData(data);
-        this.addForm.patchValue(this.estimate);
-      });
-    }
+   
 
 
     this.filteredContacts = this.customercontrol.valueChanges.pipe(
@@ -149,9 +148,9 @@ export class AddEstimateComponent implements OnInit {
         this.estimate.contact = selectedCustomer;
         this.addForm.patchValue(this.estimate);
       }
-    }); 
-    
-      //autocomplete items  
+    });
+
+    //autocomplete items  
     this.filteredItems = this.itemcontrol.valueChanges.pipe(
       startWith(''),
       map(value => (typeof value === 'string' ? value : value?.name)),
@@ -165,6 +164,21 @@ export class AddEstimateComponent implements OnInit {
     //       this.rows.push(this.createItemFormGroup(selected_item));
     //   }
     // });
+    if ( this.id == 0) {
+      console.log(this.id +'==id');
+      this.estimate.contact = 15;
+      this.addForm.patchValue(this.estimate);  
+      console.log(this.estimate);
+      console.log('new');
+    } else {
+      console.log(this.estimate);
+      this.estimateService.getById(this.id).subscribe((data: any) => {
+        this.estimate = data;
+        // this.estimate.contact = this.customers.find(customer => customer.id === this.estimate.contact) || null;
+        // this.loadData(data);
+        this.addForm.patchValue(this.estimate);
+      });
+    }
 
   }
 
@@ -174,11 +188,11 @@ export class AddEstimateComponent implements OnInit {
       this.addForm.patchValue(this.estimate);
       this.estimate.lines.forEach(line => {
         this.rows.push(this.createItemFormGroup(line));
-      }); 
+      });
     });
   }
 
-  
+
 
 
   async getCustomers() {
@@ -234,44 +248,48 @@ export class AddEstimateComponent implements OnInit {
 
 
   onAddRow(): void {
-    this.rows.push(this.createItemFormGroup());
+    this.addForm.get('lines')?.push(this.createItemFormGroup());
     this.itemsChanged();
   }
 
   onRemoveRow(rowIndex: number): void {
     const totalCostOfItem =
-      this.addForm.get('rows')?.value[rowIndex].unitPrice *
-      this.addForm.get('rows')?.value[rowIndex].units;
+      this.addForm.get('lines')?.value[rowIndex].unitPrice *
+      this.addForm.get('lines')?.value[rowIndex].amount;
 
     this.subTotal = this.subTotal - totalCostOfItem;
     this.vat = this.subTotal / 10;
     this.grandTotal = this.subTotal + this.vat;
-    this.rows.removeAt(rowIndex);
+    this.addForm.get('lines')?.removeAt(rowIndex);
     this.itemsChanged();
   }
 
-  createItemFormGroup(line: any = null ): UntypedFormGroup {
+  createItemFormGroup(line: EstimateLine | null = null): UntypedFormGroup {
     if (line) {
       return this.fb.group({
-        itemName: [line?.name || '', Validators.required],
-        units: [line?.units || ''],  
-        unitPrice: [line?.price || '', Validators.required], 
+        itemName: [line?.itemName || '', Validators.required],
+        amount: [line?.amount || ''],
+        unit_price: [line?.unit_price || '', Validators.required],
+        item_total: [line?.itemTotal || ''],
+        // tax_percentage: [line?.tax_percentage || ''],
+        // tax_value: [line?.tax_value || ''],
       });
-    }else{
+    } else {
       return this.fb.group({
-        itemName: ['', Validators.required],
-        units: [''],  
-        unitPrice: ['', Validators.required], 
+        item_name: ['', Validators.required],
+        amount: [''],
+        unit_price: ['', Validators.required],
       });
-      }
-    
+    }
+
 
   }
   onItemSelected(event: any, row: FormGroup): void {
-
-    row.get('itemName')?.setValue(event.name);
-    row.get('unitPrice')?.setValue(event.price);
-    row.get('units')?.setValue(1);
+    console.log(event);
+    row.get('product_id')?.setValue(event.id);
+    row.get('item_name')?.setValue(event.name);
+    row.get('unit_price')?.setValue(event.price);
+    row.get('amount')?.setValue(1);
     this.itemsChanged();
   }
 
@@ -279,19 +297,19 @@ export class AddEstimateComponent implements OnInit {
   itemsChanged(): void {
     console.log('itemsChanged');
     console.log(this.addForm.value);
-    const rows = this.addForm.get('rows') as FormArray;
+    const rows = this.addForm.get('lines') as FormArray;
 
     this.subTotal = rows.controls.reduce((total, row) => {
-      const unitPrice = row.get('unitPrice')?.value;
-      const units = row.get('units')?.value;
-      const itemName = row.get('itemName')?.value;
-      const itemTotal = row.get('itemTotal')?.value;
+      const unit_price = row.get('unit_price')?.value;
+      const amount = row.get('amount')?.value;
+      const item_name = row.get('item_name')?.value;
+      const item_total = row.get('item_total')?.value;
 
 
-      if (unitPrice && units) {
+      if (unit_price && amount) {
         // Update the itemTotal control
-          const itemTotal = unitPrice * units;
-        row.get('itemTotal')?.setValue(itemTotal);
+        const itemTotal = unit_price * amount;
+        row.get('item_total')?.setValue(itemTotal);
 
         return total + itemTotal;
       }
@@ -305,26 +323,42 @@ export class AddEstimateComponent implements OnInit {
   ////////////////////////////////////////////////////////////////////
 
   saveDetail(): void {
-    this.estimate.draft = this.addForm.get('draft')?.value;
-    this.estimate.date = this.addForm.get('date')?.value;
-    this.estimate.contact = this.customercontrol.value; 
-    this.estimate.imp_total = this.grandTotal;
-    this.estimate.imp_neto = this.subTotal;
-    this.estimate.lines = this.addForm.get('rows')?.value;
 
-    //set default values
-    this.estimate.puntodeventa = '1';
-    this.estimate.tag_sucursal = 'oficina';
+    console.log('entra saveDetail'); 
 
-  
-
-    // this.dialog.open(AddedDialogComponent);
-    lastValueFrom(this.estimateService.create(this.estimate)).then((data: any) => {
+    const estimate_val: Estimate = { 
+      lines: this.addForm.get('lines').value.map((line: any) => ({
+        description: line.item_name, // Fixed field name from 'desciption'
+        amount: line.amount,
+        unit_price: line.unit_price,
+        tax: this.vat,
+        total_price: line.item_total,
+        discount: 0,
+        product: line.product_id,
+        invoice: null
+      })),
+      doctype: 'estimate',
+      puntodeventa: "1",
+      draft: this.addForm.get('draft').value,
+      sent_mail: false,
+      tag_sucursal: 'oficina',
+      date: new Date().toISOString().split('T')[0],
+      contact: this.customercontrol.value.id,
+      imp_total: this.grandTotal, // Convert to string as required by backend
+      // imp_neto: this.subTotal.toString(), // Convert to string as required by backend
+      // Additional required fields from the model
+      impIVA: this.vat,
+    };
+    console.log('estimate_val',estimate_val);
+    lastValueFrom(this.estimateService.create(estimate_val)).then((data: any) => {
       this.router.navigate(['/apps/estimate']);
       this.dialog.open(AddedDialogComponent);
+    }).catch((error) => {
+      console.log('error', error);
     });
   }
 }
+
 
 
 

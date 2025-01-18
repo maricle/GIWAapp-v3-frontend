@@ -33,7 +33,7 @@
             </mat-form-field>
           </div>
         </div>
-        <div class="col-sm-6 d-flex align-items-center">
+        <div class="col-sm-4 d-flex align-items-center">
           <div class="d-flex align-items-center w-100 justify-content-end">
             <span class="f-w-600 f-s-15 mat-body-1 m-r-4">
               Order Date
@@ -41,9 +41,14 @@
             <!-- <h6 name="date" class="m-t-5 m-b-0 f-w-500 f-s-14 mat-body-2" formControlName="date">
               {{ estimate.date | date : "dd-MM-yyyy" }}
             </h6> -->
-            <mat-form-field appearance="outline" class="w-80 hide-hint">
-              <input matInput placeholder="Enter Date" name="date" formControlName="date">
+            <mat-form-field appearance="outline" class="w-60 hide-hint">
+              <input matInput [matDatepicker]="picker" placeholder="Enter Date" name="date" formControlName="date">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
+            <!-- <mat-form-field appearance="outline" class="w-80 hide-hint">
+              <input matInput placeholder="Enter Date" name="date" formControlName="date">
+            </mat-form-field> -->
           </div>
         </div>
       </div>
@@ -93,15 +98,15 @@
           <thead>
             <tr>
               <th class="p-16">#</th>
-              <th class="p-16">Item Name</th>
-              <th class="p-16">Unit Price</th>
-              <th class="p-16">Units</th>
-              <th class="p-16">Unit Total Price</th>
+              <th class="p-16">Nombre del Artículo</th>
+              <th class="p-16">Precio Unitario</th>
+              <th class="p-16">Cantidad</th>
+              <th class="p-16">Precio Total</th>
               <th class="p-16"></th>
             </tr>
           </thead>
           <tbody>
-            @for(row of addForm.get('rows')['controls']; track row; let index = $index) {
+            @for(row of addForm.get('lines')['controls']; track row; let index = $index) {
             <tr>
               <td class="p-16">
                 {{ index + 1 }}
@@ -124,23 +129,23 @@
 
               <td class="p-16">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
-                  <input type="number" matInput class="form-control" min="1" [formControl]="row.get('unitPrice')"
+                  <input type="number" matInput class="form-control" min="1" [formControl]="row.get('unit_price')"
                     (input)="itemsChanged()" readonly />
                 </mat-form-field>
               </td>
 
               <td class="p-16">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
-                  <input type="number" matInput class="form-control" min="1" [formControl]="row.get('units')"
+                  <input type="number" matInput class="form-control" min="1" [formControl]="row.get('amount')"
                     (input)="itemsChanged()" />
                 </mat-form-field>
               </td>
 
               <td class="p-16">
                 <mat-form-field appearance="outline" class="w-100 hide-hint">
-                  <input [disabled]="true" matInput matInput class="form-control" [formControl]="row.get('itemTotal')"
+                  <input [disabled]="true" matInput matInput class="form-control" [formControl]="row.get('item_total')"
                     [value]="
-                        row.get('unitPrice').value * row.get('units').value
+                        row.get('unit_price').value * row.get('amount').value
                       " />
                 </mat-form-field>
               </td>
@@ -159,7 +164,7 @@
       </div>
 
       <div class="text-right m-t-30">
-        @if(addForm.get('rows')) {
+        @if(addForm.get('lines')['controls'].length < 1 ) {
         <button color="primary" mat-flat-button (click)="onAddRow()" [disabled]="addForm.invalid">
           Add row
         </button>
